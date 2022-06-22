@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+      <head>
+            <title>How to download files using JavaScript</title>
+      </head>
+      <body>
+            <button onclick="download()">
+            Download Image
+            </button>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js">
+            </script>
+            <script>
+            </script>
+            <input type="text" placeholder="Type something..." id="myInput">
+            <button type="button" onclick="getInputValue();">Get Value</button>
+            
+            <script>
+            function getInputValue(){
+            // Selecting the input element and get its value
+                  var inputVal = document.getElementById("myInput").value;
+                  inputVal = "https://www.tatacliq.com/puma-bmw-motorsport-black-crew-t-shirt/p-mp000000011945634?sessionId=854cd46e-da46-4926-894c-5460f696f100";
+                  var mySubString = inputVal.substring(
+                          inputVal.indexOf("p-") + 2, 
+                        inputVal.lastIndexOf("?")
+
+                        );
+                  // Displaying the value
+                  
+                  var mpcode = mySubString.toUpperCase();
+                  var mallURL = 'https://www.tatacliq.com/marketplacewebservices/v2/mpl/products/productDetails/'+mpcode+'?isPwa=true&isMDE=true&strategy=new';
+                  var superZoomURLs = [];
+                  axios.get(mallURL)
+                  .then(response => {
+                        const imagesList = response.data.galleryImagesList;
+                        imagesList.forEach(myFunction);
+                        function myFunction(item) {
+                              superZoomURLs.push('https:'+item.galleryImages[4].value);
+                        }
+                        
+                        // function downloadImage(imageURL){
+                        //         console.log(imageURL);
+                        //             axios({
+                        //               url: imageURL,
+                        //               method: 'GET',
+                        //               responseType: 'blob', // important
+                        //             }).then((response) => {
+                        //               const url = window.URL.createObjectURL(new Blob([response.data]));
+                        //               const link = document.createElement('a');
+                        //               link.href = url;
+                        //               link.setAttribute('download', 'file.pdf');
+                        //               document.body.appendChild(link);
+                        //               link.click();
+                        //             });
+                        // }
+                        superZoomURLs.forEach(downloadImage);
+                        function downloadImage(imageURL) {
+                              console.log(imageURL);
+                              axios({
+                                    url: imageURL,
+                                    method: 'GET',
+                                    responseType: 'blob'
+                              })
+                                    .then((response) => {
+                                          const url = window.URL
+                                                .createObjectURL(new Blob([response.data]));
+                                          const link = document.createElement('a');
+                                          link.href = url;
+                                          link.setAttribute('download', 'image.jpg');
+                                          document.body.appendChild(link);
+                                          link.click();
+                                          document.body.removeChild(link);
+                                    })
+                        }
+                  });
+
+            }
+            </script>
+      </body>
+</html>
